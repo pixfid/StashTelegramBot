@@ -51,6 +51,7 @@ cp .env.example .env
 TELEGRAM_BOT_TOKEN=ваш_токен_от_BotFather
 STASH_URL=http://адрес_вашего_stashapp:9999
 STASH_API_KEY=ключ_из_stashapp
+DATA=путь_до_вашей_папки_DATA
 ```
 
 3. **Запустите:**
@@ -76,7 +77,7 @@ go mod download
 export TELEGRAM_BOT_TOKEN="ваш_токен"
 export STASH_URL="http://localhost:9999"
 export STASH_API_KEY="ваш_ключ"
-export DATA="путь до вашей папки DATA"
+export DATA="путь_до_вашей_папки_DATA"
 ```
 
 4. **Запустите:**
