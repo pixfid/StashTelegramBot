@@ -36,8 +36,8 @@ stashapp-bot/
 
 1. **Скачайте проект:**
 ```bash
-git clone https://github.com/yourusername/stashapp-bot
-cd stashapp-bot
+git clone https://github.com/pixfid/StashTelegramBot
+cd StashTelegramBot
 ```
 
 2. **Настройте переменные:**
