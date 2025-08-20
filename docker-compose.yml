@@ -1,0 +1,59 @@
+services:
+  stashapp-telegram-bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: stashapp-telegram-bot:latest
+    container_name: stashapp-bot
+    restart: unless-stopped
+    
+    environment:
+      # Telegram Bot Token - ОБЯЗАТЕЛЬНО укажите ваш токен
+      TELEGRAM_BOT_TOKEN: "${TELEGRAM_BOT_TOKEN}"
+      
+      # URL вашего StashApp сервера
+      STASH_URL: "${STASH_URL}"
+      
+      # API ключ StashApp
+      STASH_API_KEY: "${STASH_API_KEY}"
+      
+      # Timezone
+      TZ: "${TZ:-Europe/Moscow}"
+
+      #DATA папка для временных файлов (video preview)
+    
+    # Монтирование директории для временных файлов
+    volumes:
+      - ./data:/app/DATA
+      - ./logs:/app/logs
+    
+    # Сеть для связи с StashApp (если он в Docker)
+    networks:
+      - stash-network
+    
+    # Логирование
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels: "service=stashapp-bot"
+    
+    # Ограничение ресурсов
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 128M
+    
+    # Дополнительные настройки безопасности
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+networks:
+  stash-network:
+    driver: bridge
+    name: stash-network
