@@ -2,10 +2,8 @@ package main
 
 import (
 	"context"
-	"math/rand"
 	"os"
 	"os/signal"
-	"time"
 
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
@@ -13,7 +11,6 @@ import (
 
 func main() {
 	// Инициализация
-	rand.Seed(time.Now().UnixNano())
 	logger := NewLogger("Main")
 
 	// Загружаем конфигурацию

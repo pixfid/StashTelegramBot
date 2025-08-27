@@ -2,9 +2,11 @@ package main
 
 import (
 	"bytes"
+	crand "crypto/rand"
 	"encoding/json"
 	"fmt"
 	"io"
+	"math/big"
 	"math/rand"
 	"net/http"
 	"time"
@@ -104,6 +106,19 @@ func (s *StashClient) graphQLRequest(query string, variables map[string]interfac
 	return nil, fmt.Errorf("не удалось подключиться после 3 попыток: %v", lastErr)
 }
 
+// cryptoIntn возвращает равномерное случайное число в [0, n) без модульного смещения.
+func cryptoIntn(n int) (int, error) {
+	if n <= 0 {
+		return 0, nil
+	}
+	max := big.NewInt(int64(n))
+	v, err := crand.Int(crand.Reader, max)
+	if err != nil {
+		return 0, err
+	}
+	return int(v.Int64()), nil
+}
+
 func (s *StashClient) GetRandomScene() (*Scene, error) {
 	s.logger.Info("Получение случайной сцены")
 
@@ -124,7 +139,12 @@ func (s *StashClient) GetRandomScene() (*Scene, error) {
 		return nil, fmt.Errorf("нет доступных видео")
 	}
 
-	randomIndex := rand.Intn(count)
+	// Пытаемся получить индекс через crypto/rand (качественная случайность)
+	randomIndex, err := cryptoIntn(count)
+	if err != nil {
+		// Фоллбек на math/rand — быстрый и потокобезопасный глобальный генератор
+		randomIndex = rand.Intn(count)
+	}
 
 	query := `
 		query FindScenes($filter: FindFilterType) {
