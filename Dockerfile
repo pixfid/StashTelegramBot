@@ -61,8 +61,8 @@ WORKDIR /app
 ENV STASH_URL="" \
     STASH_API_KEY="" \
     TELEGRAM_BOT_TOKEN="" \
-    TZ="Europe/Moscow"
-
+    TZ="Europe/Moscow" \
+    DATA="/app/DATA"
 # Точка монтирования для временных файлов
 VOLUME ["/app/DATA"]
 
