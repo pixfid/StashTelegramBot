@@ -48,7 +48,7 @@ func CreateSceneKeyboard(scene *Scene, streamURL string) *models.InlineKeyboardM
 	// Кнопка стрима
 	kb.InlineKeyboard = append(kb.InlineKeyboard, []models.InlineKeyboardButton{
 		{
-			Text: "▶️ Открыть стрим",
+			Text: "🔗 Открыть стрим",
 			URL:  streamURL,
 		},
 	})
