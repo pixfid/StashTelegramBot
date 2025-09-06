@@ -162,6 +162,10 @@ func (s *StashClient) GetRandomScene() (*Scene, error) {
 						preview
 						sprite
 					}
+					studio {
+						id
+						name
+					}
 				}
 			}
 		}`

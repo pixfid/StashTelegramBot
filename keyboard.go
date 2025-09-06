@@ -33,6 +33,17 @@ func CreateSceneKeyboard(scene *Scene, streamURL string) *models.InlineKeyboardM
 			kb.InlineKeyboard = append(kb.InlineKeyboard, performerRow)
 		}
 	}
+	// Кнопка студии
+	if scene.Studio.Name != "" {
+		studioRow := []models.InlineKeyboardButton{}
+		studioRow = append(studioRow, models.InlineKeyboardButton{
+			Text:         fmt.Sprintf("📹 %s", scene.Studio.Name),
+			CallbackData: fmt.Sprintf("studio_%s", scene.Studio.ID),
+		})
+		if studioRow != nil {
+			kb.InlineKeyboard = append(kb.InlineKeyboard, studioRow)
+		}
+	}
 
 	// Кнопка стрима
 	kb.InlineKeyboard = append(kb.InlineKeyboard, []models.InlineKeyboardButton{

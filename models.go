@@ -27,6 +27,10 @@ type Scene struct {
 		ID   string `json:"id"`
 		Name string `json:"name"`
 	} `json:"performers"`
+	Studio struct {
+		ID   string `json:"id"`
+		Name string `json:"name"`
+	} `json:"studio"`
 }
 
 type GraphQLResponse struct {

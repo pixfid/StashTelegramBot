@@ -101,7 +101,73 @@ func (h *BotHandler) HandleCallback(ctx context.Context, b *bot.Bot, update *mod
 
 	case strings.HasPrefix(callback.Data, "performer_"):
 		h.handlePerformerCallback(ctx, b, callback)
+	case strings.HasPrefix(callback.Data, "studio_"):
+		h.handleStudioCallback(ctx, b, callback)
 	}
+}
+
+func (h *BotHandler) handleStudioCallback(ctx context.Context, b *bot.Bot, callback *models.CallbackQuery) {
+	studioID := strings.TrimPrefix(callback.Data, "studio_")
+	h.logger.Info("Поиск видео студии: %s", studioID)
+
+	query := `
+		query FindScenes($studioID: [ID!]) {
+			findScenes(
+				scene_filter: {
+					studios: {
+						value: $studioID
+						modifier: INCLUDES
+					}
+				}
+			) {
+				scenes {
+					id
+					title
+					paths {
+						screenshot
+						stream
+						preview
+						sprite
+					}
+					performers {
+						id
+						name
+					}
+					studio {
+						id
+						name
+					}
+				}
+				count
+			}
+		}`
+
+	variables := map[string]interface{}{
+		"studioID": []string{studioID},
+	}
+
+	resp, err := h.stash.graphQLRequest(query, variables)
+	if err != nil {
+		h.logger.Error("Ошибка поиска: %v", err)
+		b.SendMessage(ctx, &bot.SendMessageParams{
+			ChatID: callback.Message.Message.Chat.ID,
+			Text:   fmt.Sprintf("❌ Ошибка поиска: %v", err),
+		})
+		return
+	}
+
+	if len(resp.Data.FindScenes.Scenes) == 0 {
+		b.SendMessage(ctx, &bot.SendMessageParams{
+			ChatID: callback.Message.Message.Chat.ID,
+			Text:   "❌ Видео с этим исполнителем не найдены",
+		})
+		return
+	}
+
+	randomIndex := rand.Intn(len(resp.Data.FindScenes.Scenes))
+	scene := &resp.Data.FindScenes.Scenes[randomIndex]
+
+	h.sendScene(ctx, b, callback.Message.Message.Chat.ID, scene)
 }
 
 // handlePerformerCallback обработка callback для исполнителя
@@ -129,6 +195,10 @@ func (h *BotHandler) handlePerformerCallback(ctx context.Context, b *bot.Bot, ca
 						sprite
 					}
 					performers {
+						id
+						name
+					}
+					studio {
 						id
 						name
 					}
